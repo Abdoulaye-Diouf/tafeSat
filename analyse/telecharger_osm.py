@@ -4,6 +4,7 @@ Usage : python analyse/telecharger_osm.py
 Sorties (dans donnees/) : batiments_osm.geojson, equipements_osm.geojson, quartiers_osm.geojson
 """
 
+import json
 import sys
 import time
 
@@ -48,11 +49,21 @@ def cases(colonnes: int = 3, lignes: int = 6) -> list[tuple]:
 
 
 def batiments() -> gpd.GeoDataFrame:
+    # Chaque case est gardée en cache : si un serveur échoue, on relance et on reprend où on s'était arrêté.
+    cache = DONNEES / "cache_osm"
+    cache.mkdir(parents=True, exist_ok=True)
     lignes, vus = [], set()
     toutes = cases()
     for n, zone in enumerate(toutes, 1):
-        print(f"  case {n}/{len(toutes)}", flush=True)
-        for el in requete_overpass('way["building"](BBOX);', zone):
+        fichier = cache / f"batiments_case_{n:02d}.json"
+        if fichier.exists():
+            elements = json.loads(fichier.read_text(encoding="utf-8"))
+            print(f"  case {n}/{len(toutes)} (déjà téléchargée)", flush=True)
+        else:
+            print(f"  case {n}/{len(toutes)}", flush=True)
+            elements = requete_overpass('way["building"](BBOX);', zone)
+            fichier.write_text(json.dumps(elements), encoding="utf-8")
+        for el in elements:
             coords = [(p["lon"], p["lat"]) for p in el.get("geometry", [])]
             if el["id"] not in vus and len(coords) >= 4 and coords[0] == coords[-1]:
                 vus.add(el["id"])

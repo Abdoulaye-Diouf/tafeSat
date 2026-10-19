@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cahier des charges TefesSat</title>
+<style>
+  @page { size: A4; margin: 15mm 16mm; }
+  :root { --teal: #0B7A6F; --light: #E6F3F1; --text: #1f2a2e; --muted: #5a6b70; --line: #cfdcd9; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin: 0; background: #e9eeed; color: var(--text); font-family: Calibri, "Segoe UI", Arial, sans-serif; font-size: 10.5pt; line-height: 1.38; }
+  .page { max-width: 210mm; margin: 24px auto; background: #fff; padding: 15mm 16mm; box-shadow: 0 2px 12px rgba(0,0,0,.12); }
+  .kicker { color: var(--teal); font-size: 9pt; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin: 0; }
+  h1 { color: var(--teal); font-size: 24pt; margin: 2px 0 0; line-height: 1.1; }
+  .subtitle { font-size: 12.5pt; font-weight: 600; margin: 4px 0 10px; }
+  .info { width: 100%; border-collapse: collapse; background: var(--light); border-left: 4px solid var(--teal); margin-bottom: 6px; }
+  .info td { padding: 3px 8px; vertical-align: top; border: none; }
+  .info td:first-child { font-weight: 700; color: var(--teal); white-space: nowrap; width: 1%; }
+  h2 { color: var(--teal); font-size: 13pt; margin: 14px 0 5px; padding-bottom: 2px; border-bottom: 1.5px solid var(--teal); break-after: avoid; }
+  p { margin: 0 0 6px; text-align: justify; }
+  ul, ol { margin: 0 0 6px; padding-left: 20px; }
+  li { margin-bottom: 3px; }
+  table { width: 100%; border-collapse: collapse; margin: 4px 0 8px; font-size: 9.5pt; break-inside: avoid; }
+  th { background: var(--teal); color: #fff; text-align: left; padding: 4px 6px; }
+  td { padding: 4px 6px; border: 1px solid var(--line); vertical-align: top; }
+  tbody tr:nth-child(even) td { background: #f5f9f8; }
+  @media (max-width: 700px) { .page { padding: 16px; margin: 0; } table { font-size: 9pt; } }
+  @media print { body { background: #fff; } .page { margin: 0; padding: 0; box-shadow: none; max-width: none; } }
+</style>
+</head>
+<body>
+<div class="page">
+<p class="kicker">Hackathon national « Du satellite à la solution » – SENSAT / TRL</p>
+<h1>Cahier des charges de l’équipe</h1>
+<p class="subtitle">TefesSat : qui fait quoi, et pour quand, du 19 au 22 octobre 2026</p>
+<table class="info"><tbody><tr><td>Équipe</td><td>Ndèye Fatou SOW (référente), Abdoulaye DIOUF, Malick FALL</td></tr><tr><td>Objectif</td><td>Faire partie des 4 meilleures équipes, invitées à Diamniadio le 26 octobre</td></tr><tr><td>Date limite</td><td>Présentation à envoyer le 22 octobre à 23 h 59 (délai de rigueur). Objectif interne : 20 h.</td></tr><tr><td>Jury</td><td>Présentation en ligne les 23 et 24 octobre</td></tr><tr><td>Code</td><td>Dépôt GitHub privé Ndeye-Fatou-SOW/TefesSat (dossier D:\Hackaton_Sensat)</td></tr></tbody></table>
+<h2>1. Ce que le jury doit voir</h2>
+<p>SENSAT a donné la logique attendue : <strong>le problème → les données → l’analyse → la solution → le résultat → l’impact</strong>. Le jury veut une solution concrète, un cas local et <strong>un résultat visible, obtenu avec des données réelles</strong>. Tout ce que nous produisons doit servir l’un de ces six points.</p>
+<table><colgroup><col style="width:25.5%"><col style="width:54.6%"><col style="width:19.9%"></colgroup><thead><tr><th>Livrable final</th><th>Description</th><th>Responsable</th></tr></thead><tbody><tr><td>Carte avant / après</td><td>Trait de côte 2015 et 2025 superposés, zones perdues en rouge</td><td>Abdoulaye</td></tr><tr><td>Carte des vitesses de recul</td><td>Recul en m/an par tronçon de 50 m, avec le niveau de risque</td><td>Ndèye Fatou</td></tr><tr><td>Chiffres clés</td><td>Recul moyen et maximum, bâtiments et équipements menacés d’ici 2030, par quartier</td><td>Ndèye Fatou</td></tr><tr><td>Tableau de bord web</td><td>Carte interactive : on clique sur un tronçon pour voir son historique et son risque</td><td>Malick</td></tr><tr><td>Vidéo de démonstration</td><td>2 à 3 minutes, au cas où la connexion lâche pendant l’oral</td><td>Malick</td></tr><tr><td>Présentation</td><td>10 à 12 diapositives, envoyée avant le 22 octobre à 23 h 59</td><td>Les trois</td></tr></tbody></table>
+<h2>2. Rôles</h2>
+<table><colgroup><col style="width:21.1%"><col style="width:39.5%"><col style="width:39.5%"></colgroup><thead><tr><th>Membre</th><th>Rôle principal</th><th>Il ou elle livre</th></tr></thead><tbody><tr><td>Abdoulaye DIOUF</td><td>Images satellites et extraction du trait de côte (Google Earth Engine, CoastSat)</td><td>traits_de_cote.geojson : une ligne par date, côté océan uniquement, colonne « date »</td></tr><tr><td>Ndèye Fatou SOW</td><td>Coordination, analyse (transects, vitesses de recul, projections, exposition), relations avec SENSAT</td><td>Les fichiers du dossier resultats/ (GeoJSON et CSV) et les chiffres clés</td></tr><tr><td>Malick FALL</td><td>Tableau de bord web (React, Leaflet), vidéo de démonstration, mise en forme de la présentation</td><td>Le lien du tableau de bord et la vidéo</td></tr></tbody></table>
+<h2>3. Planning jour par jour</h2>
+<p><strong>Lundi 19 octobre (ce soir) : mise en route</strong></p>
+<ul><li><strong>Tous :</strong> rejoindre le dépôt GitHub (envoyer son nom d’utilisateur à Ndèye Fatou), lire le README.</li><li><strong>Abdoulaye :</strong> activer son compte Google Earth Engine et installer CoastSat.</li><li><strong>Malick :</strong> créer le projet React avec une carte Leaflet centrée sur Saint-Louis.</li><li><strong>Ndèye Fatou :</strong> télécharger les bâtiments OpenStreetMap ; surveiller l’arrivée de la note d’orientation et des données de TRL.</li></ul>
+<p><strong>Mardi 20 octobre (jour 1) : les données</strong></p>
+<table><colgroup><col style="width:18.8%"><col style="width:62.3%"><col style="width:18.8%"></colgroup><thead><tr><th>Qui</th><th>Tâche</th><th>À livrer avant</th></tr></thead><tbody><tr><td>Abdoulaye</td><td>Extraire les traits de côte (au moins une date par an, 2015 à 2025) et retirer la rive du fleuve</td><td>20 h</td></tr><tr><td>Ndèye Fatou</td><td>Lire la note d’orientation et adapter le plan ; lancer l’analyse dès réception des traits de côte</td><td>22 h</td></tr><tr><td>Malick</td><td>Afficher sur la carte les fichiers de test (transects colorés selon le risque, bande menacée)</td><td>20 h</td></tr></tbody></table>
+<p><strong>Mercredi 21 octobre (jour 2) : l’analyse et le tableau de bord</strong></p>
+<table><colgroup><col style="width:18.8%"><col style="width:62.3%"><col style="width:18.8%"></colgroup><thead><tr><th>Qui</th><th>Tâche</th><th>À livrer avant</th></tr></thead><tbody><tr><td>Ndèye Fatou</td><td>Vérifier les résultats (valeurs aberrantes, R²), ajuster les seuils de risque, produire les chiffres clés par quartier</td><td>14 h</td></tr><tr><td>Abdoulaye</td><td>Carte avant / après et animation de la brèche depuis 2003 (Landsat)</td><td>18 h</td></tr><tr><td>Malick</td><td>Brancher les vrais résultats sur le tableau de bord, fiche détaillée de chaque tronçon</td><td>20 h</td></tr><tr><td>Les trois</td><td>Premier brouillon de la présentation</td><td>22 h</td></tr></tbody></table>
+<p><strong>Jeudi 22 octobre (jour 3) : la présentation</strong></p>
+<table><colgroup><col style="width:18.8%"><col style="width:62.3%"><col style="width:18.8%"></colgroup><thead><tr><th>Qui</th><th>Tâche</th><th>À livrer avant</th></tr></thead><tbody><tr><td>Malick</td><td>Finaliser le tableau de bord, enregistrer la vidéo de démonstration</td><td>14 h</td></tr><tr><td>Ndèye Fatou</td><td>Finaliser les diapositives et relire tous les chiffres</td><td>17 h</td></tr><tr><td>Les trois</td><td>Répétition complète avec un minuteur</td><td>19 h</td></tr><tr><td>Ndèye Fatou</td><td><strong>Envoi de la présentation à SENSAT</strong></td><td><strong>20 h</strong> (limite officielle : 23 h 59)</td></tr></tbody></table>
+<h2>4. Échanges entre nous</h2>
+<ul><li><strong>Deux points rapides par jour</strong> sur WhatsApp (15 minutes) : 9 h et 21 h. Chacun dit ce qu’il a fini, ce qu’il fait ensuite et ce qui le bloque.</li><li><strong>Un blocage de plus d’une heure se signale tout de suite</strong> dans le groupe, sans attendre le point suivant.</li><li><strong>Tout le code va sur GitHub</strong>, et les fichiers lourds (images, vidéo) sur le Google Drive partagé.</li><li><strong>Les fichiers échangés suivent les formats du README</strong> : GeoJSON en WGS84, dates au format AAAA-MM-JJ.</li></ul>
+<h2>5. Plan de secours</h2>
+<table><colgroup><col style="width:39.9%"><col style="width:60.1%"></colgroup><thead><tr><th>Si…</th><th>Alors…</th></tr></thead><tbody><tr><td>Les données de TRL arrivent tard</td><td>Abdoulaye télécharge lui-même les images Sentinel-2 dans Google Earth Engine</td></tr><tr><td>L’extraction automatique du trait de côte échoue</td><td>Tracer à la main dans QGIS le trait de côte de 4 dates (2015, 2018, 2021, 2025) : l’analyse fonctionne avec 3 dates minimum</td></tr><tr><td>Le tableau de bord n’est pas prêt</td><td>Présenter les cartes en images et la vidéo ; le tableau de bord devient une perspective</td></tr><tr><td>Un membre est indisponible</td><td>Sa tâche passe au membre le plus proche : Ndèye Fatou reprend les images, Abdoulaye reprend l’analyse</td></tr><tr><td>La connexion coupe pendant l’oral</td><td>Lancer la vidéo de démonstration ; un deuxième membre est prêt à reprendre la parole</td></tr></tbody></table>
+<h2>6. Structure de la présentation (10 à 12 diapositives)</h2>
+<ol><li><strong>Titre</strong> : TefesSat, l’équipe, une photo de la Langue de Barbarie.</li><li><strong>Le problème</strong> : maisons détruites à Guet Ndar, la brèche de 2003, les familles relogées.</li><li><strong>Pourquoi le satellite</strong> : voir toute la côte, depuis 2000, gratuitement.</li><li><strong>Les données</strong> : Sentinel-2, Landsat, OpenStreetMap, zone et période d’étude.</li><li><strong>La méthode</strong> : schéma en 4 étapes (trait de côte → transects → recul → exposition).</li><li><strong>Résultat 1</strong> : la carte avant / après.</li><li><strong>Résultat 2</strong> : la carte des vitesses de recul et les chiffres clés.</li><li><strong>Résultat 3</strong> : les bâtiments et équipements menacés d’ici 2030.</li><li><strong>La solution</strong> : démonstration du tableau de bord.</li><li><strong>Qui l’utilise et pour quelle décision</strong> : mairie, ADM, DEEC, protection civile.</li><li><strong>Impact et ODD</strong> : 13, 11, 14 et 1.</li><li><strong>Limites et suite</strong> : extension à Rufisque, Mbour, Joal ; mises à jour plusieurs fois par an.</li></ol>
+<p><strong>À l’oral :</strong> Ndèye Fatou présente le problème, l’impact et la conclusion ; Abdoulaye présente les données et la méthode ; Malick fait la démonstration. Chacun doit pouvoir répondre aux questions sur sa partie.</p>
+<h2>7. Ce qui fera la différence</h2>
+<ul><li><strong>Des résultats sur données réelles</strong>, jamais sur les données de test.</li><li><strong>Des chiffres précis et vérifiés</strong> : « X bâtiments menacés à Guet Ndar d’ici 2030 » marque plus qu’un long discours.</li><li><strong>Un utilisateur réel nommé</strong> et une décision concrète qu’il pourra prendre grâce à nous.</li><li><strong>Une démonstration qui fonctionne</strong>, avec la vidéo en secours.</li><li><strong>L’honnêteté sur les limites</strong> (précision des images, marée, projection linéaire) : le jury est composé de spécialistes.</li><li><strong>Le respect strict des délais</strong> : envoi à 20 h, pas à 23 h 58.</li></ul>
+</div>
+</body>
+</html>

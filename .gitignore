@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 resultats/
 donnees/*_TEST.geojson
+donnees/cache_osm/
