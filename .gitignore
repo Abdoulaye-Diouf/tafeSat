@@ -4,3 +4,4 @@ __pycache__/
 resultats/
 donnees/*_TEST.geojson
 donnees/cache_osm/
+donnees/apercus/

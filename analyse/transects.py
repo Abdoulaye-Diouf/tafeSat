@@ -17,10 +17,24 @@ def ligne_principale(geometrie) -> LineString:
     return geometrie
 
 
+def relier_nord_sud(geometrie) -> LineString:
+    """Relie les morceaux d'un trait de côte (coupé aux embouchures) en une seule ligne, du nord au sud."""
+    if isinstance(geometrie, LineString):
+        return geometrie
+    morceaux = sorted(geometrie.geoms, key=lambda g: -max(y for _, y in g.coords))
+    coords = []
+    for g in morceaux:
+        c = list(g.coords)
+        if c[0][1] < c[-1][1]:  # orienter chaque morceau du nord vers le sud
+            c.reverse()
+        coords.extend(c)
+    return LineString(coords)
+
+
 def ligne_de_base(traits: gpd.GeoDataFrame) -> LineString:
-    """Ligne de base = le trait de côte le plus ancien, lissé."""
+    """Ligne de base = le trait de côte le plus ancien, morceaux reliés du nord au sud, puis lissé."""
     plus_ancien = traits.sort_values("date").iloc[0].geometry
-    return ligne_principale(plus_ancien).simplify(SIMPLIFICATION_LIGNE_DE_BASE_M)
+    return relier_nord_sud(plus_ancien).simplify(SIMPLIFICATION_LIGNE_DE_BASE_M)
 
 
 def construire_transects(base: LineString) -> gpd.GeoDataFrame:
