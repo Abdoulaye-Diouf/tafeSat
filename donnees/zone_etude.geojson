@@ -1,0 +1,26 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nom": "TefesSat - Zone d'etude",
+        "description": "Langue de Barbarie, Saint-Louis (Senegal) : Goxu Mbacc, Guet Ndar, Ndar Toute, Hydrobase et zone de la breche (Doun Baba Dieye)",
+        "equipe": "TefesSat",
+        "systeme": "WGS84 (EPSG:4326), degres decimaux"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-16.58, 16.08],
+            [-16.45, 16.08],
+            [-16.45, 15.75],
+            [-16.58, 15.75],
+            [-16.58, 16.08]
+          ]
+        ]
+      }
+    }
+  ]
+}
