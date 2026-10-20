@@ -17,18 +17,18 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from config import CRS_METRIQUE, RESULTATS
+from config import CRS_METRIQUE, FIN_TRAVAUX_DIGUE, RESULTATS, ZONE_DIGUE_LAT
 from recul import annee_decimale, positions_sur_transects
 from transects import construire_transects, ligne_de_base
 
-# Latitudes approximatives (WGS84) : digue de Goxu Mbacc au quai de pêche de Guet Ndar (environ 2,1 km),
-# et zone témoin d'Hydrobase, au sud, sans ouvrage
-ZONES = {"Zone de la digue (Goxu Mbacc – Guet Ndar)": (16.020, 16.042),
+# Latitudes approximatives (WGS84) : digue de Goxu Mbacc au quai de pêche de Guet Ndar (environ 2,1 km,
+# définie dans config.py), et zone témoin d'Hydrobase, au sud, sans ouvrage
+ZONES = {"Zone de la digue (Goxu Mbacc – Guet Ndar)": ZONE_DIGUE_LAT,
          "Zone témoin sans digue (Hydrobase)": (15.970, 16.000)}
 COULEURS = {"Zone de la digue (Goxu Mbacc – Guet Ndar)": "#008C7E",
             "Zone témoin sans digue (Hydrobase)": "#C2581B"}
 AVANT, APRES = (2016, 2020), (2023, 2025)
-DEBUT_TRAVAUX, FIN_TRAVAUX = 2021.0, 2022.55
+DEBUT_TRAVAUX, FIN_TRAVAUX = 2021.0, FIN_TRAVAUX_DIGUE
 
 
 def main():

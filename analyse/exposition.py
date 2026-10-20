@@ -5,7 +5,7 @@ import numpy as np
 import rasterio
 from shapely.geometry import Polygon
 
-from config import (CONFIANCE_MIN_GOOGLE, CRS_METRIQUE, ESPACEMENT_TRANSECTS_M, FICHIER_POPULATION,
+from config import (CONFIANCE_MIN_GOOGLE, CRS_METRIQUE, ECART_DERNIERE_DATE_MAX_ANS, ESPACEMENT_TRANSECTS_M, FICHIER_POPULATION,
                     PERSONNES_PAR_BATIMENT, QUARTIER_DISTANCE_COTE_MAX_M, QUARTIER_DISTANCE_TRANSECT_MAX_M)
 
 
@@ -96,22 +96,39 @@ def compter_exposition(resultats: gpd.GeoDataFrame, bandes: gpd.GeoDataFrame,
     return resultats, batiments_menaces
 
 
-def marge_avant_batiments(resultats: gpd.GeoDataFrame, batiments: gpd.GeoDataFrame | None,
-                          annee: int) -> gpd.GeoDataFrame:
-    """Distance (m) entre la côte projetée et le bâtiment le plus proche : la marge qui restera."""
-    colonne = f"marge_batiments_{annee}_m"
-    resultats[colonne] = np.nan
-    projetes = resultats[resultats[f"position_{annee}_m"].notna()]
-    if batiments is None or not len(batiments) or not len(projetes):
-        return resultats
+def _distance_maison_la_plus_proche(resultats, batiments, colonne_position):
+    """Distance (m) entre la position de la côte donnée par `colonne_position` et le bâtiment le plus proche."""
+    sel = resultats[resultats[colonne_position].notna()]
+    if batiments is None or not len(batiments) or not len(sel):
+        return gpd.pd.Series(dtype=float)
     points = gpd.GeoDataFrame(
-        {"transect_id": projetes.transect_id.to_numpy()},
-        geometry=gpd.points_from_xy(projetes.origine_x + projetes.nx * projetes[f"position_{annee}_m"],
-                                    projetes.origine_y + projetes.ny * projetes[f"position_{annee}_m"]),
+        {"transect_id": sel.transect_id.to_numpy()},
+        geometry=gpd.points_from_xy(sel.origine_x + sel.nx * sel[colonne_position],
+                                    sel.origine_y + sel.ny * sel[colonne_position]),
         crs=resultats.crs)
     proches = gpd.sjoin_nearest(points, batiments[["geometry"]].to_crs(resultats.crs), distance_col="d")
-    marges = proches.groupby("transect_id").d.min().round(0)
+    return proches.groupby("transect_id").d.min().round(0)
+
+
+def marge_avant_batiments(resultats: gpd.GeoDataFrame, batiments: gpd.GeoDataFrame | None,
+                          annee: int | None) -> gpd.GeoDataFrame:
+    """Distance (m) entre la côte et le bâtiment le plus proche.
+
+    annee=None : côte actuelle (dernière image), sans projection -> marge_batiments_actuelle_m.
+    annee=2030… : côte projetée -> marge_batiments_{annee}_m, et le pire cas (marge moins la marge
+    d'erreur de la projection) -> pire_cas_marge_{annee}_m ; une valeur négative veut dire que des
+    maisons pourraient être atteintes si le recul est au haut de la fourchette.
+    """
+    if annee is None:
+        # Seulement pour les tronçons mesurés sur une image récente : sinon la « position actuelle » est ancienne
+        recents = resultats[resultats.annee_actuelle.max() - resultats.annee_actuelle <= ECART_DERNIERE_DATE_MAX_ANS]
+        marges = _distance_maison_la_plus_proche(recents, batiments, "position_actuelle_m")
+        resultats["marge_batiments_actuelle_m"] = resultats.transect_id.map(marges)
+        return resultats
+    colonne = f"marge_batiments_{annee}_m"
+    marges = _distance_maison_la_plus_proche(resultats, batiments, f"position_{annee}_m")
     resultats[colonne] = resultats.transect_id.map(marges)
+    resultats[f"pire_cas_marge_{annee}_m"] = (resultats[colonne] - resultats[f"incertitude_{annee}_m"]).round(0)
     return resultats
 
 

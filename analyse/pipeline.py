@@ -24,7 +24,7 @@ from exposition import (bandes_menacees, compter_exposition, fusionner_batiments
                         marge_avant_batiments, rattacher_quartiers)
 from recul import positions_sur_transects, statistiques, traits_projetes
 from risque import altitude_cote, classer_risque_global
-from transects import construire_transects, ligne_de_base
+from transects import construire_transects, ligne_de_base, transects_zone_digue
 
 COULEURS_RISQUE = {"faible": "#2e7d32", "moyen": "#f9a825", "élevé": "#ef6c00", "très élevé": "#c62828",
                    NON_EVALUE: "#9e9e9e"}
@@ -75,7 +75,7 @@ def main() -> None:
     print(f"{len(transects)} transects tous les 50 m sur {base.length / 1000:.1f} km de côte")
 
     positions = positions_sur_transects(transects, traits)
-    resultats = statistiques(transects, positions)
+    resultats = statistiques(transects, positions, zone_digue=transects_zone_digue(transects))
     print(f"{len(resultats)} transects avec au moins 3 mesures")
 
     batiments = fusionner_batiments(lire_si_present("batiments_osm"), lire_si_present("batiments_google_microsoft"))
@@ -86,6 +86,7 @@ def main() -> None:
     resultats = rattacher_quartiers(resultats, lire_si_present("quartiers_osm"), base)
 
     annee = ANNEES_PROJECTION[0]
+    resultats = marge_avant_batiments(resultats, batiments, None)
     bandes_par_annee, batiments_par_annee = {}, {}
     for a in ANNEES_PROJECTION:
         bandes_par_annee[a] = bandes_menacees(resultats, a)
@@ -109,7 +110,10 @@ def main() -> None:
     resume = (resultats.groupby("quartier", dropna=False)
               .agg(transects=("transect_id", "count"), recul_moyen_m_an=("recul_m_an", "mean"),
                    recul_max_m_an=("recul_m_an", "max"), altitude_mediane_m=("altitude_m", "median"),
+                   troncons_non_evalues=("projection_fiable", lambda s: int((~s).sum())),
+                   marge_min_actuelle_m=("marge_batiments_actuelle_m", "min"),
                    **{f"marge_min_{a}_m": (f"marge_batiments_{a}_m", "min") for a in ANNEES_PROJECTION},
+                   **{f"pire_cas_marge_min_{a}_m": (f"pire_cas_marge_{a}_m", "min") for a in ANNEES_PROJECTION},
                    **{f"{quoi}_menaces_{a}": (f"{quoi}_menaces_{a}", "sum")
                       for a in ANNEES_PROJECTION for quoi in ("batiments", "habitants", "equipements")})
               .round(2).sort_values("recul_moyen_m_an", ascending=False))
@@ -117,7 +121,8 @@ def main() -> None:
     carte_controle(traits, resultats, projetes, bandes, RESULTATS / "carte_controle.png")
 
     print(f"\nTronçons projetés : {int(resultats.projection_fiable.sum())} ; avec une rupture (zone de la brèche) : "
-          f"{int(resultats.rupture.sum())}")
+          f"{int(resultats.rupture.sum())} ; derrière la digue : {int(resultats.zone_digue.sum())} "
+          f"(dont non évalués : {int((resultats.zone_digue & ~resultats.projection_fiable).sum())})")
     print(f"Recul moyen : {resultats.recul_m_an.mean():.2f} m/an ; maximum : {resultats.recul_m_an.max():.2f} m/an")
     for a in ANNEES_PROJECTION:
         print(f"D'ici {a} : {int(resultats[f'batiments_menaces_{a}'].sum())} bâtiments, "

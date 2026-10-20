@@ -22,7 +22,7 @@ from exposition import (bandes_menacees, compter_exposition, fusionner_batiments
                         marge_avant_batiments, rattacher_quartiers)
 from recul import positions_sur_transects, statistiques
 from risque import altitude_cote, classer_risque_global
-from transects import construire_transects, ligne_de_base
+from transects import construire_transects, ligne_de_base, transects_zone_digue
 
 ANNEE = 2035
 # Réglage -> (module(s) où il est utilisé, valeurs testées) ; la valeur de référence est celle de config.py
@@ -40,7 +40,7 @@ def lire(nom):
 
 
 def chiffres_cles(transects, positions, base, osm, google, equipements, quartiers):
-    resultats = statistiques(transects, positions)
+    resultats = statistiques(transects, positions, zone_digue=transects_zone_digue(transects))
     resultats = rattacher_quartiers(resultats, quartiers, base)
     batiments = habitants_par_batiment(fusionner_batiments(osm, google))
     bandes = bandes_menacees(resultats, ANNEE)
@@ -48,14 +48,14 @@ def chiffres_cles(transects, positions, base, osm, google, equipements, quartier
     resultats = marge_avant_batiments(resultats, batiments, ANNEE)
     resultats = classer_risque_global(altitude_cote(resultats), ANNEE)
 
-    def marge(quartier):
-        sel = resultats[resultats.quartier == quartier][f"marge_batiments_{ANNEE}_m"]
-        return sel.min()
+    def minimum(quartier, colonne):
+        return resultats[resultats.quartier == quartier][colonne].min()
 
     return {"troncons_projetes": int(resultats.projection_fiable.sum()),
             "troncons_non_evalues": int((~resultats.projection_fiable).sum()),
-            f"marge_{ANNEE}_hydrobase_m": marge("Hydrobase"),
-            f"marge_{ANNEE}_tassinere_m": marge("Tassinère"),
+            f"marge_{ANNEE}_hydrobase_m": minimum("Hydrobase", f"marge_batiments_{ANNEE}_m"),
+            f"marge_{ANNEE}_tassinere_m": minimum("Tassinère", f"marge_batiments_{ANNEE}_m"),
+            f"pire_cas_{ANNEE}_hydrobase_m": minimum("Hydrobase", f"pire_cas_marge_{ANNEE}_m"),
             f"batiments_menaces_{ANNEE}": int(resultats[f"batiments_menaces_{ANNEE}"].sum()),
             f"habitants_menaces_{ANNEE}": round(float(resultats[f"habitants_menaces_{ANNEE}"].sum())),
             "troncons_dune_basse": int(resultats.cote_basse.sum())}

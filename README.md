@@ -99,6 +99,9 @@ Tous les GeoJSON de sortie sont en WGS84, prêts pour Leaflet.
 | `recul_m_an` | vitesse robuste ; positive = la côte recule, négative = elle avance |
 | `risque` | `faible`, `moyen`, `élevé`, `très élevé` ou `non évalué` |
 | `rupture`, `date_rupture` | zone de la brèche : saut de la côte et sa date |
+| `zone_digue`, `motif_non_evalue` | zone influencée par la digue (pas de projection : trop peu d'images depuis les travaux), et raison d'un « non évalué » |
+| `marge_batiments_actuelle_m` | distance mesurée aujourd'hui entre la côte et la maison la plus proche, sans projection |
+| `pire_cas_marge_2030_m` (idem 2035) | marge moins la marge d'erreur ; négative = des maisons pourraient être atteintes dans le pire cas |
 | `position_2030_m`, `incertitude_2030_m` (idem 2035) | côte projetée et marge d'erreur |
 | `marge_batiments_2030_m` (idem 2035) | distance entre la côte projetée et la maison la plus proche |
 | `batiments_menaces_2030`, `habitants_menaces_2030`, `equipements_menaces_2030` (idem 2035) | ce qui est dans la bande menacée |

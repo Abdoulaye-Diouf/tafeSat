@@ -6,8 +6,8 @@ import pandas as pd
 from scipy.stats import theilslopes
 from shapely.geometry import LineString, MultiLineString, Point
 
-from config import (ANNEES_PROJECTION, ECART_DERNIERE_DATE_MAX_ANS, MIN_DATES_PROJECTION, MIN_DUREE_PROJECTION_ANS,
-                    NIVEAUX_RISQUE, NON_EVALUE, SAUT_RUPTURE_M, SEUILS_RECUL_M_AN)
+from config import (ANNEES_PROJECTION, ECART_DERNIERE_DATE_MAX_ANS, FIN_TRAVAUX_DIGUE, MIN_DATES_PROJECTION,
+                    MIN_DUREE_PROJECTION_ANS, NIVEAUX_RISQUE, NON_EVALUE, SAUT_RUPTURE_M, SEUILS_RECUL_M_AN)
 
 
 def annee_decimale(dates: pd.Series) -> np.ndarray:
@@ -54,15 +54,18 @@ def regression_lineaire(t: np.ndarray, x: np.ndarray) -> tuple[float, float]:
     return float(pente), (1 - ss_res / ss_tot if ss_tot > 0 else np.nan)
 
 
-def statistiques(transects: gpd.GeoDataFrame, positions: pd.DataFrame, min_dates: int = 3) -> gpd.GeoDataFrame:
+def statistiques(transects: gpd.GeoDataFrame, positions: pd.DataFrame, min_dates: int = 3,
+                 zone_digue: set | None = None) -> gpd.GeoDataFrame:
     """Calcule, pour chaque transect :
     - NSM : déplacement net entre le premier et le dernier trait de côte (m)
     - EPR : NSM divisé par la durée (m/an)
     - LRR : pente de la régression linéaire sur toute la série (m/an), et son R² (méthode DSAS)
     - rupture : saut de plus de SAUT_RUPTURE_M entre deux dates (zone de la brèche)
     - recul_m_an : vitesse robuste (Theil-Sen) après la dernière rupture, utilisée pour projeter
+    - zone_digue : derrière la digue, seules les dates d'après les travaux servent à projeter
     Convention : distance positive vers la mer ; recul_m_an positif = la côte recule.
     """
+    zone_digue = zone_digue or set()
     derniere_date_globale = annee_decimale(positions.date).max()
     lignes = []
     for tid, groupe in positions.groupby("transect_id"):
@@ -76,9 +79,17 @@ def statistiques(transects: gpd.GeoDataFrame, positions: pd.DataFrame, min_dates
         # Dernière rupture : on ne garde que les dates qui suivent
         sauts = np.flatnonzero(np.abs(np.diff(x)) > SAUT_RUPTURE_M)
         debut = int(sauts[-1]) + 1 if len(sauts) else 0
+        derriere_digue = tid in zone_digue
+        if derriere_digue:  # l'ouvrage change le comportement de la côte : on repart de la fin des travaux
+            debut = max(debut, int(np.searchsorted(t, FIN_TRAVAUX_DIGUE)))
         tp, xp = t[debut:], x[debut:]
-        fiable = (len(tp) >= MIN_DATES_PROJECTION and tp[-1] - tp[0] >= MIN_DUREE_PROJECTION_ANS
+        fiable = (len(tp) >= MIN_DATES_PROJECTION and len(tp) >= 2 and tp[-1] - tp[0] >= MIN_DUREE_PROJECTION_ANS
                   and derniere_date_globale - tp[-1] <= ECART_DERNIERE_DATE_MAX_ANS)
+        if not fiable:
+            motif = ("zone influencée par la digue : trop peu de dates depuis les travaux" if derriere_digue
+                     else "série trop courte ou trop ancienne")
+        else:
+            motif = None
 
         ligne = {"transect_id": tid, "nb_dates": len(t),
                  "premiere_date": str(pd.to_datetime(groupe.date.iloc[0]).date()),
@@ -87,7 +98,8 @@ def statistiques(transects: gpd.GeoDataFrame, positions: pd.DataFrame, min_dates
                  "lrr_m_an": lrr, "r2": r2,
                  "rupture": bool(len(sauts)),
                  "date_rupture": str(pd.to_datetime(groupe.date.iloc[debut]).date()) if len(sauts) else None,
-                 "projection_fiable": bool(fiable),
+                 "zone_digue": derriere_digue,
+                 "projection_fiable": bool(fiable), "motif_non_evalue": motif,
                  "position_actuelle_m": float(x[-1]), "annee_actuelle": float(t[-1])}
         if fiable:
             pente, _, bas, haut = theilslopes(xp, tp, alpha=0.95)

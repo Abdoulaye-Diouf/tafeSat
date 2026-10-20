@@ -26,6 +26,14 @@ DEMI_LONGUEUR_TRANSECT_M = 1000   # 1 km de chaque côté : au sud, la côte a r
 SAUT_RUPTURE_M = 150
 # Conditions pour projeter un tronçon (sinon : « non évalué »)
 MIN_DATES_PROJECTION = 4
+# Digue de Goxu Mbacc au quai de pêche de Guet Ndar (travaux de janvier 2021 à juillet 2022) : la côte y a
+# changé de comportement à cause de l'ouvrage. Derrière la digue, la projection n'utilise que les dates
+# d'après les travaux (sinon elle prolongerait l'avancée de la plage indéfiniment).
+ZONE_DIGUE_LAT = (16.020, 16.042)   # la digue elle-même, latitudes approximatives (WGS84) : sert à effet_digue.py
+# Zone où la côte change brusquement de comportement au moment des travaux (saut de 40 à 100 m vers la mer
+# entre 2020 et 2022, observé sur les séries) : plus large que la digue, du quai de pêche au nord de Goxu Mbacc.
+ZONE_INFLUENCE_DIGUE_LAT = (16.012, 16.062)
+FIN_TRAVAUX_DIGUE = 2022.55         # juillet 2022, en année décimale
 MIN_DUREE_PROJECTION_ANS = 3
 ECART_DERNIERE_DATE_MAX_ANS = 1.5  # la dernière mesure doit être récente
 SIMPLIFICATION_LIGNE_DE_BASE_M = 100  # lissage de la ligne de base

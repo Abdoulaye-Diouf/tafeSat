@@ -6,7 +6,15 @@ from shapely.geometry import LineString, MultiLineString, Point
 from shapely.ops import linemerge
 
 from config import (CRS_METRIQUE, DEMI_LONGUEUR_TRANSECT_M, ESPACEMENT_TRANSECTS_M, POINT_EN_MER,
-                    SIMPLIFICATION_LIGNE_DE_BASE_M)
+                    SIMPLIFICATION_LIGNE_DE_BASE_M, ZONE_INFLUENCE_DIGUE_LAT)
+
+
+def transects_zone_digue(transects: gpd.GeoDataFrame) -> set:
+    """Numéros des transects de la zone influencée par la digue de Guet Ndar (d'après la latitude de leur origine)."""
+    latitudes = gpd.GeoSeries(gpd.points_from_xy(transects.origine_x, transects.origine_y),
+                              crs=transects.crs).to_crs("EPSG:4326").y.to_numpy()
+    sud, nord = ZONE_INFLUENCE_DIGUE_LAT
+    return set(transects.transect_id.to_numpy()[(latitudes >= sud) & (latitudes <= nord)])
 
 
 def ligne_principale(geometrie) -> LineString:
