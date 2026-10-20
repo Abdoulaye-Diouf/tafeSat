@@ -1,7 +1,8 @@
 .venv/
 __pycache__/
 *.pyc
-resultats/
+# Résultats : GeoJSON et CSV sur GitHub (lus par le tableau de bord), images de vérification en local
+resultats/*.png
 donnees/*_TEST.geojson
 donnees/cache_osm/
 donnees/apercus/
