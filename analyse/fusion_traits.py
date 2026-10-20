@@ -1,0 +1,43 @@
+"""Combine les traits de côte CoastSat d'Abdoulaye (nord, environ 37 dates par an) et les nôtres (toute la côte, une
+date par an) en un seul fichier pour l'analyse.
+
+Dans la bande de latitude couverte par CoastSat (Hydrobase – Goxu Mbacc), on garde ses traits de côte, beaucoup plus
+nombreux : ils permettent de projeter la zone de la digue, où nous n'avons que 3 images depuis les travaux. Ailleurs
+(brèche, Guéthie, nord de Goxu Mbacc), on garde nos traits de côte Sentinel-2.
+
+Usage : python fusion_traits.py
+Sortie : donnees/traits_de_cote_combines.geojson (colonne « source » : CoastSat ou Sentinel-2 TefesSat)
+"""
+
+import geopandas as gpd
+import pandas as pd
+from shapely.geometry import box
+
+from config import DONNEES
+
+TRAITS_NOUS = DONNEES / "traits_de_cote_S2.geojson"
+TRAITS_COASTSAT = DONNEES / "traits_de_cote_coastsat.geojson"  # traits de côte CoastSat d'Abdoulaye
+SORTIE = DONNEES / "traits_de_cote_combines.geojson"
+
+
+def main():
+    nous = gpd.read_file(TRAITS_NOUS).to_crs("EPSG:4326")
+    coastsat = gpd.read_file(TRAITS_COASTSAT).to_crs("EPSG:4326")
+    ouest, sud, est, nord = coastsat.total_bounds
+    bande = box(-180, sud, 180, nord)  # bande de latitude couverte par CoastSat
+
+    nous["geometry"] = nous.geometry.difference(bande)
+    nous = nous[~nous.geometry.is_empty]
+    nous = nous.assign(date=pd.to_datetime(nous.date).dt.date.astype(str), source="Sentinel-2 TefesSat")
+    coastsat = coastsat.assign(date=pd.to_datetime(coastsat.date).dt.date.astype(str), source="CoastSat (Abdoulaye DIOUF)")
+
+    combines = gpd.GeoDataFrame(pd.concat([nous[["date", "source", "geometry"]], coastsat[["date", "source", "geometry"]]],
+                                          ignore_index=True), crs="EPSG:4326")
+    combines.to_file(SORTIE, driver="GeoJSON")
+    print(f"CoastSat : {len(coastsat)} traits de côte, latitudes {sud:.3f} à {nord:.3f}")
+    print(f"Sentinel-2 TefesSat : {len(nous)} traits de côte hors de cette bande")
+    print(f"-> {SORTIE.name} : {len(combines)} traits de côte")
+
+
+if __name__ == "__main__":
+    main()

@@ -64,10 +64,11 @@ def chiffres_cles(transects, positions, base, osm, google, equipements, quartier
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--traits", required=True)
+    parser.add_argument("--base", help="GeoJSON de la ligne de base (comme pipeline.py)")
     args = parser.parse_args()
 
     traits = gpd.read_file(args.traits).to_crs(config.CRS_METRIQUE)
-    base = ligne_de_base(traits)
+    base = ligne_de_base(gpd.read_file(args.base).to_crs(config.CRS_METRIQUE) if args.base else traits)
     transects = construire_transects(base)
     print("Mesure des positions sur les transects (une seule fois)…", flush=True)
     positions = positions_sur_transects(transects, traits)

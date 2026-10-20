@@ -61,6 +61,9 @@ def carte_controle(traits, resultats, projetes, bandes, chemin) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--traits", required=True, help="GeoJSON des traits de côte datés")
+    parser.add_argument("--base", help="GeoJSON dont le trait le plus ancien sert de ligne de base "
+                                       "(par défaut : --traits ; utile si --traits ne couvre pas toute la côte à sa "
+                                       "première date, comme le fichier combiné)")
     args = parser.parse_args()
     RESULTATS.mkdir(exist_ok=True)
 
@@ -70,7 +73,7 @@ def main() -> None:
     traits = traits.to_crs(CRS_METRIQUE)
     print(f"{len(traits)} traits de côte, du {traits.date.min()} au {traits.date.max()}")
 
-    base = ligne_de_base(traits)
+    base = ligne_de_base(gpd.read_file(args.base).to_crs(CRS_METRIQUE) if args.base else traits)
     transects = construire_transects(base)
     print(f"{len(transects)} transects tous les 50 m sur {base.length / 1000:.1f} km de côte")
 

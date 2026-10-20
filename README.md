@@ -44,10 +44,11 @@ python analyse/telecharger_batiments_google.py        # bâtiments Google Open B
 python analyse/traits_de_cote_sentinel2.py            # -> donnees/traits_de_cote_S2.geojson
 ```
 
-**3. Analyse complète** :
+**3. Analyse complète**, avec les traits de côte combinés : au nord, les 372 traits CoastSat d'Abdoulaye (série dense) ; ailleurs, les nôtres. La ligne de base reste notre trait de côte de 2016, qui couvre toute la côte :
 
 ```bash
-python analyse/pipeline.py --traits donnees/traits_de_cote_S2.geojson
+python analyse/fusion_traits.py                       # -> donnees/traits_de_cote_combines.geojson
+python analyse/pipeline.py --traits donnees/traits_de_cote_combines.geojson --base donnees/traits_de_cote_S2.geojson
 ```
 
 **4. Analyses complémentaires** :
@@ -55,7 +56,8 @@ python analyse/pipeline.py --traits donnees/traits_de_cote_S2.geojson
 ```bash
 python analyse/effet_digue.py --traits donnees/traits_de_cote_S2.geojson     # avant / après la digue de Guet Ndar, avec zone témoin
 python analyse/verification_sentinel1.py                                     # trait de côte radar comparé à Sentinel-2
-python analyse/sensibilite.py --traits donnees/traits_de_cote_S2.geojson     # les chiffres clés changent-ils si on modifie les réglages ?
+python analyse/comparaison_coastsat.py                                       # nos traits de côte comparés à ceux de CoastSat
+python analyse/sensibilite.py --traits donnees/traits_de_cote_combines.geojson --base donnees/traits_de_cote_S2.geojson   # les chiffres clés changent-ils si on modifie les réglages ?
 ```
 
 Pour une nouvelle année ou d'autres traits de côte (CoastSat), on refait seulement l'étape 2, puis on relance les étapes 3 et 4 avec le nouveau fichier : tout le reste se recalcule.
@@ -87,6 +89,7 @@ Au moins 4 dates sur 3 ans sont nécessaires pour projeter un tronçon ; idéale
 | `effet_digue.csv`, `effet_digue.png` | déplacement de la côte derrière la digue et dans la zone témoin |
 | `verification_sentinel1.csv` | écart entre le trait de côte radar et le trait de côte optique |
 | `sensibilite.csv` | chiffres clés recalculés en changeant un réglage à la fois |
+| `comparaison_coastsat.csv` | écart entre nos traits de côte et ceux de CoastSat, aux dates communes |
 | `carte_controle.png` | carte rapide pour vérifier le résultat |
 
 Tous les GeoJSON de sortie sont en WGS84, prêts pour Leaflet.
