@@ -1,4 +1,4 @@
-"""Extraction PRÉLIMINAIRE des traits de côte à partir d'images Sentinel-2 (Microsoft Planetary Computer).
+"""Extraction des traits de côte à partir d'images Sentinel-2 L2A (Copernicus, lues via Microsoft Planetary Computer).
 
 Pour chaque année, on prend l'image de saison sèche la moins nuageuse, on calcule l'indice
 MNDWI (vert - SWIR) / (vert + SWIR), on sépare l'eau de la terre avec un seuil d'Otsu, puis on
@@ -8,7 +8,7 @@ C'est une première version pour tester la chaîne sur des données réelles et 
 Limites : pas de correction de la marée, l'écume des vagues peut décaler légèrement la ligne.
 
 Usage : python traits_de_cote_sentinel2.py
-Sortie : donnees/traits_de_cote_S2_preliminaire.geojson (+ apercus/ pour vérifier visuellement)
+Sortie : donnees/traits_de_cote_S2.geojson (+ apercus/ pour vérifier visuellement)
 """
 
 import geopandas as gpd
@@ -151,7 +151,7 @@ def main():
         apercu(mndwi, transform, ligne, f"{date} – MNDWI et trait de côte", dossier_apercus / f"trait_{date}.png")
         resultats.append({"date": date, "satname": "S2", "image": item.id, "seuil_otsu": round(seuil, 4), "geometry": ligne})
     gdf = gpd.GeoDataFrame(resultats, geometry="geometry", crs=crs_commun).to_crs("EPSG:4326")
-    sortie = DONNEES / "traits_de_cote_S2_preliminaire.geojson"
+    sortie = DONNEES / "traits_de_cote_S2.geojson"
     gdf.to_file(sortie, driver="GeoJSON")
     print(f"\n{len(gdf)} traits de côte écrits dans {sortie}")
 

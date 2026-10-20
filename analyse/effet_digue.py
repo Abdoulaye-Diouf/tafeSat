@@ -4,7 +4,7 @@ On compare la position de la côte avant (2016–2020) et après (2023–2025) l
 et dans une zone témoin sans digue (Hydrobase). Si la côte avance dans la zone de la digue et pas dans la
 zone témoin, c'est l'ouvrage qui fait la différence, pas une année calme.
 
-Usage : python effet_digue.py --traits donnees/traits_de_cote_S2_preliminaire.geojson
+Usage : python effet_digue.py --traits donnees/traits_de_cote_S2.geojson
 Sorties : resultats/effet_digue.csv, resultats/effet_digue.png
 """
 

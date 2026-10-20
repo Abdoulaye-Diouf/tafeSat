@@ -1,6 +1,6 @@
 # TefesSat – analyse du recul de la côte (Langue de Barbarie, Saint-Louis)
 
-Hackathon national « Du satellite à la solution » (SENSAT / TRL), octobre 2026.
+Hackathon « Du satellite à la solution » (SENSAT / TRL Space), octobre 2026.
 Équipe : Ndèye Fatou SOW (référente), Abdoulaye DIOUF, Malick FALL.
 
 ## Ce que fait ce code
@@ -38,26 +38,27 @@ python analyse/telecharger_altitude_population.py     # altitude Copernicus DEM 
 python analyse/telecharger_batiments_google.py        # bâtiments Google Open Buildings et Microsoft (1 minute, 34 Mo, non versionné)
 ```
 
-**2. Traits de côte** : soit ceux d'Abdoulaye (CoastSat, images TRL), soit la version préliminaire :
+**2. Traits de côte** à partir des images Sentinel-2 (une par an, saison sèche, 2016 à 2025) ; une version CoastSat peut servir de comparaison :
 
 ```bash
-python analyse/traits_de_cote_sentinel2.py            # -> donnees/traits_de_cote_S2_preliminaire.geojson
+python analyse/traits_de_cote_sentinel2.py            # -> donnees/traits_de_cote_S2.geojson
 ```
 
 **3. Analyse complète** :
 
 ```bash
-python analyse/pipeline.py --traits donnees/traits_de_cote_S2_preliminaire.geojson
+python analyse/pipeline.py --traits donnees/traits_de_cote_S2.geojson
 ```
 
 **4. Analyses complémentaires** :
 
 ```bash
-python analyse/effet_digue.py --traits donnees/traits_de_cote_S2_preliminaire.geojson   # avant / après la digue de Guet Ndar, avec zone témoin
-python analyse/verification_sentinel1.py                                               # trait de côte radar comparé à Sentinel-2
+python analyse/effet_digue.py --traits donnees/traits_de_cote_S2.geojson     # avant / après la digue de Guet Ndar, avec zone témoin
+python analyse/verification_sentinel1.py                                     # trait de côte radar comparé à Sentinel-2
+python analyse/sensibilite.py --traits donnees/traits_de_cote_S2.geojson     # les chiffres clés changent-ils si on modifie les réglages ?
 ```
 
-Quand les images de TRL arrivent, on refait seulement l'étape 2, puis on relance les étapes 3 et 4 avec le nouveau fichier : tout le reste se recalcule.
+Pour une nouvelle année ou d'autres traits de côte (CoastSat), on refait seulement l'étape 2, puis on relance les étapes 3 et 4 avec le nouveau fichier : tout le reste se recalcule.
 
 Pour tester sans vraies données : `python analyse/donnees_test.py`, puis
 `python analyse/pipeline.py --traits donnees/traits_de_cote_TEST.geojson`.
@@ -85,6 +86,7 @@ Au moins 4 dates sur 3 ans sont nécessaires pour projeter un tronçon ; idéale
 | `resume_par_quartier.csv` | par quartier : recul moyen et maximum, altitude, marge minimale, bâtiments, habitants et équipements menacés |
 | `effet_digue.csv`, `effet_digue.png` | déplacement de la côte derrière la digue et dans la zone témoin |
 | `verification_sentinel1.csv` | écart entre le trait de côte radar et le trait de côte optique |
+| `sensibilite.csv` | chiffres clés recalculés en changeant un réglage à la fois |
 | `carte_controle.png` | carte rapide pour vérifier le résultat |
 
 Tous les GeoJSON de sortie sont en WGS84, prêts pour Leaflet.
@@ -109,11 +111,11 @@ Les textes du tableau de bord en français et en wolof sont dans `docs/traductio
 ## Paramètres (`analyse/config.py`)
 
 Zone d'étude, transects, seuils de rupture, conditions pour projeter, seuils de risque, altitude basse, seuil d'habitants exposés, confiance minimale des bâtiments Google.
-Les seuils de risque (0,5 / 1 / 2 m/an) sont **provisoires** : à ajuster après les résultats sur les images de TRL.
+Les seuils de risque (0,5 / 1 / 2 m/an) sont des choix de l'équipe : à ajuster avec les utilisateurs (mairie, CSE). L'effet des principaux réglages sur les résultats est mesuré par `analyse/sensibilite.py`.
 
 ## Sources de données
 
-- Sentinel-2 L2A et Sentinel-1 RTC : Microsoft Planetary Computer (en attendant les images de TRL).
+- Sentinel-2 L2A et Sentinel-1 RTC (Copernicus) : lus via Microsoft Planetary Computer.
 - Altitude : Copernicus DEM GLO-30. Population : WorldPop 2025, 100 m, version contrainte.
 - Bâtiments : OpenStreetMap, plus Google Open Buildings et Microsoft (jeu fusionné VIDA, Source Cooperative), confiance ≥ 70 %.
 

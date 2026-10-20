@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inventaire des sources TefesSat</title>
+<style>
+  @page { size: A4; margin: 15mm 16mm; }
+  :root { --teal: #0B7A6F; --light: #E6F3F1; --text: #1f2a2e; --muted: #5a6b70; --line: #cfdcd9; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin: 0; background: #e9eeed; color: var(--text); font-family: Calibri, "Segoe UI", Arial, sans-serif; font-size: 10.5pt; line-height: 1.38; }
+  .page { max-width: 210mm; margin: 24px auto; background: #fff; padding: 15mm 16mm; box-shadow: 0 2px 12px rgba(0,0,0,.12); }
+  .kicker { color: var(--teal); font-size: 9pt; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin: 0; }
+  h1 { color: var(--teal); font-size: 24pt; margin: 2px 0 0; line-height: 1.1; }
+  .subtitle { font-size: 12.5pt; font-weight: 600; margin: 4px 0 10px; }
+  .info { width: 100%; border-collapse: collapse; background: var(--light); border-left: 4px solid var(--teal); margin-bottom: 6px; }
+  .info td { padding: 3px 8px; vertical-align: top; border: none; }
+  .info td:first-child { font-weight: 700; color: var(--teal); white-space: nowrap; width: 1%; }
+  h2 { color: var(--teal); font-size: 13pt; margin: 14px 0 5px; padding-bottom: 2px; border-bottom: 1.5px solid var(--teal); break-after: avoid; }
+  p { margin: 0 0 6px; text-align: justify; }
+  ul, ol { margin: 0 0 6px; padding-left: 20px; }
+  li { margin-bottom: 3px; }
+  table { width: 100%; border-collapse: collapse; margin: 4px 0 8px; font-size: 9.5pt; break-inside: avoid; }
+  th { background: var(--teal); color: #fff; text-align: left; padding: 4px 6px; }
+  td { padding: 4px 6px; border: 1px solid var(--line); vertical-align: top; }
+  tbody tr:nth-child(even) td { background: #f5f9f8; }
+  figure { margin: 6px 0 8px; break-inside: avoid; text-align: center; }
+  figure img { max-width: 100%; height: auto; }
+  figcaption { font-size: 9pt; color: var(--muted); font-style: italic; margin-top: 2px; }
+  .placeholder { border: 2px dashed var(--teal); background: var(--light); color: var(--teal); padding: 28px 12px; text-align: center; font-weight: 700; margin: 6px 0 8px; }
+  @media (max-width: 700px) { .page { padding: 16px; margin: 0; } table { font-size: 9pt; } }
+  @media print { body { background: #fff; } .page { margin: 0; padding: 0; box-shadow: none; max-width: none; } }
+</style>
+</head>
+<body>
+<div class="page">
+<p class="kicker">HACKATHON « DU SATELLITE À LA SOLUTION » – SENSAT / TRL SPACE – INVENTAIRE DES SOURCES</p>
+<h1>Inventaire des sources</h1>
+<p class="subtitle">TefesSat – données, outils, intelligence artificielle et contributions des membres</p>
+<table class="info"><tbody><tr><td>Équipe</td><td>Ndèye Fatou SOW (référente), Abdoulaye DIOUF, Malick FALL – Master 2, UCAD</td></tr><tr><td>Zone</td><td>Langue de Barbarie, Saint-Louis : 15,75–16,08° N ; 16,45–16,58° O (WGS84)</td></tr><tr><td>Consultation</td><td>Données téléchargées les 19 et 20 octobre 2026</td></tr><tr><td>Reproduction</td><td>Scripts Python et instructions pas à pas : dossier « scripts » (README)</td></tr></tbody></table>
+<h2>1. Données satellitaires et géographiques</h2>
+<table><colgroup><col style="width:16.8%"><col style="width:28.7%"><col style="width:9.9%"><col style="width:24.8%"><col style="width:19.7%"></colgroup><thead><tr><th>Jeu de données</th><th>Produit et dates utilisés</th><th>Résolution</th><th>Licence et attribution</th><th>Accès</th></tr></thead><tbody><tr><td>Sentinel-2 L2A (Copernicus, ESA)</td><td>10 images de saison sèche, nuages &lt; 5 % : 14/01/2016, 27/02/2017, 19/11/2017, 22/02/2019, 27/02/2020, 02/01/2021, 28/12/2021, 22/01/2023, 08/12/2023, 06/01/2025. Bandes B03, B11 et image couleur</td><td>10 m (B11 : 20 m)</td><td>Données Copernicus libres et gratuites. « Contient des données Copernicus Sentinel modifiées (2016–2025) »</td><td>Microsoft Planetary Computer, collection sentinel-2-l2a</td></tr><tr><td>Sentinel-1 RTC (Copernicus, ESA)</td><td>3 images : 26/02/2019, 24/01/2023, 01/01/2025. Polarisation VV</td><td>10 m</td><td>Données Copernicus ; traitement RTC publié par Microsoft Planetary Computer (licence indiquée sur la fiche de la collection)</td><td>Microsoft Planetary Computer, collection sentinel-1-rtc</td></tr><tr><td>Copernicus DEM GLO-30</td><td>Modèle numérique de surface, acquisitions 2011–2015</td><td>30 m</td><td>Licence Copernicus DEM, gratuite avec attribution : © DLR e.V. 2010-2014 et © Airbus Defence and Space GmbH 2014-2018, fournis dans le cadre de COPERNICUS par l’Union européenne et l’ESA</td><td>Microsoft Planetary Computer, collection cop-dem-glo-30</td></tr><tr><td>WorldPop 2025, version contrainte (R2024B)</td><td>Nombre d’habitants par carré, Sénégal, 2025</td><td>100 m</td><td>CC BY 4.0, © WorldPop (University of Southampton)</td><td>data.worldpop.org</td></tr><tr><td>OpenStreetMap</td><td>Bâtiments (44 052), écoles, lieux de culte, structures de santé (409), lieux nommés (59), extraits le 19/10/2026</td><td>–</td><td>ODbL, © les contributeurs d’OpenStreetMap</td><td>API Overpass</td></tr><tr><td>Google Open Buildings et Microsoft Building Footprints</td><td>Bâtiments absents d’OSM, confiance ≥ 70 % : 25 451 (Google) et 978 (Microsoft) ajoutés</td><td>–</td><td>Google Open Buildings : CC BY 4.0 ou ODbL ; Microsoft : ODbL. Jeu combiné publié par VIDA</td><td>Source Cooperative (VIDA, google-microsoft-open-buildings)</td></tr></tbody></table>
+<p>Toutes les données sont ouvertes : aucun achat, abonnement ni donnée propriétaire n’a été utilisé. Les images Sentinel ont été lues via Microsoft Planetary Computer, qui redistribue les produits Copernicus ; elles sont aussi disponibles sur Copernicus Data Space Ecosystem.</p>
+<h2>2. Informations de contexte (textes)</h2>
+<ul><li>Construction de la digue de protection de Goxu Mbacc au quai de pêche de Guet Ndar (environ 2,1 km, travaux de janvier 2021 à juillet 2022) : articles de presse (Ndarinfo, EnQuêtePlus, Teranga News) et documents publics du projet de la Banque mondiale (plan d’action de réinstallation). [Liens exacts à ajouter]</li><li>Ouverture de la brèche en 2003 et relogements après les houles de 2017–2018 : sources de presse et documents publics. [Liens exacts à ajouter]</li></ul>
+<h2>3. Méthodes de référence</h2>
+<ul><li>Indice MNDWI : Xu, H. (2006). Modification of normalised difference water index (NDWI) to enhance open water features in remotely sensed imagery. International Journal of Remote Sensing, 27(14).</li><li>Seuil automatique : Otsu, N. (1979). A threshold selection method from gray-level histograms. IEEE Transactions on Systems, Man, and Cybernetics, 9(1).</li><li>Indicateurs de recul par transects (NSM, EPR, LRR) : Himmelstoss, E. A. et al. (2018). Digital Shoreline Analysis System (DSAS) version 5.0 user guide. U.S. Geological Survey.</li><li>Pente robuste : Sen, P. K. (1968). Estimates of the regression coefficient based on Kendall’s tau. Journal of the American Statistical Association, 63(324).</li><li>Extraction du trait de côte (comparaison) : Vos, K. et al. (2019). CoastSat: A Google Earth Engine-enabled Python toolkit to extract shorelines from publicly available satellite imagery. Environmental Modelling &amp; Software, 122.</li></ul>
+<h2>4. Outils et logiciels</h2>
+<table><colgroup><col style="width:31.7%"><col style="width:68.3%"></colgroup><thead><tr><th>Outil</th><th>Usage</th></tr></thead><tbody><tr><td>Python 3.14</td><td>Toute la chaîne de traitement (scripts du dossier « scripts »)</td></tr><tr><td>geopandas, shapely, pyproj, pyogrio</td><td>Géométries, transects, projections (UTM 28N, EPSG:32628), lecture et écriture GeoJSON</td></tr><tr><td>rasterio, numpy, scipy, scikit-image</td><td>Lecture des images, indice MNDWI, seuil d’Otsu, filtre médian, pente de Theil-Sen</td></tr><tr><td>pandas, matplotlib</td><td>Tableaux de résultats et graphiques</td></tr><tr><td>pystac-client, planetary-computer, requests, duckdb</td><td>Recherche et téléchargement des images et des données ouvertes</td></tr><tr><td>Git et GitHub</td><td>Partage et versionnement du code dans l’équipe</td></tr><tr><td>[À compléter par Abdoulaye : CoastSat, Google Earth Engine, QGIS…]</td><td>[Usage]</td></tr><tr><td>[À compléter par Malick : React, Leaflet, FastAPI…]</td><td>[Usage : prototype de tableau de bord]</td></tr></tbody></table>
+<h2>5. Outils d’intelligence artificielle (déclaration)</h2>
+<p>Comme le demandent les règles du défi, nous déclarons les outils d’intelligence artificielle utilisés :</p>
+<table><colgroup><col style="width:25.8%"><col style="width:19.8%"><col style="width:54.4%"></colgroup><thead><tr><th>Outil</th><th>Utilisé par</th><th>Pour quoi</th></tr></thead><tbody><tr><td>Claude (Anthropic), assistant de programmation Claude Code</td><td>Ndèye Fatou SOW</td><td>Aide à l’écriture et à la relecture des scripts Python, à la rédaction et à la mise en forme des documents (note de concept, présentation, inventaire)</td></tr><tr><td>[À compléter par chaque membre, ou « aucun »]</td><td>[Nom]</td><td>[Usage]</td></tr></tbody></table>
+<p>L’équipe a vérifié elle-même les résultats (contrôle visuel sur les images en couleurs réelles, comparaison avec le radar Sentinel-1, zone témoin pour la digue, analyse de sensibilité) et peut expliquer chaque étape de la méthode. Aucun résultat n’a été inventé ou complété par l’IA : tous les chiffres viennent des scripts appliqués aux données listées ci-dessus.</p>
+<h2>6. Contributions des membres</h2>
+<table><colgroup><col style="width:23.8%"><col style="width:76.2%"></colgroup><thead><tr><th>Membre</th><th>Contribution</th></tr></thead><tbody><tr><td>Ndèye Fatou SOW (référente)</td><td>Coordination de l’équipe et relations avec SENSAT ; chaîne d’analyse (extraction Sentinel-2, transects, vitesses de recul, projections 2030–2035, exposition, niveau de risque) ; effet de la digue ; vérification Sentinel-1 ; analyse de sensibilité ; note de concept et inventaire des sources</td></tr><tr><td>Abdoulaye DIOUF</td><td>[À compléter : traits de côte CoastSat, carte avant / après, classification eau / sable par apprentissage automatique, vérification des bâtiments sur image…]</td></tr><tr><td>Malick FALL</td><td>[À compléter : prototype de tableau de bord, version français / wolof, mise en forme de la présentation…]</td></tr></tbody></table>
+</div>
+</body>
+</html>

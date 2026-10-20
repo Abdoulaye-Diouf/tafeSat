@@ -55,7 +55,7 @@ def trait_radar(item):
 def main():
     catalogue = pystac_client.Client.open("https://planetarycomputer.microsoft.com/api/stac/v1",
                                           modifier=planetary_computer.sign_inplace)
-    s2 = gpd.read_file(DONNEES / "traits_de_cote_S2_preliminaire.geojson")
+    s2 = gpd.read_file(DONNEES / "traits_de_cote_S2.geojson")
     s2["date"] = pd.to_datetime(s2.date).dt.date.astype(str)
 
     radar = []
