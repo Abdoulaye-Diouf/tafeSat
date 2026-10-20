@@ -12,3 +12,6 @@ donnees/cache_worldpop/
 prive/
 # Re-téléchargeable en 1 minute (analyse/telecharger_batiments_google.py), 34 Mo
 donnees/batiments_google_microsoft.geojson
+# Fichiers de vérification internes, inutiles au tableau de bord
+resultats/positions_pivot*.csv
+resultats/surfaces_avant_apres.csv
