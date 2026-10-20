@@ -77,9 +77,16 @@ def trait_de_cote(item):
         swir = np.clip(swir - 1000, 1, None)
     mndwi = np.where(valide, (vert - swir) / np.maximum(vert + swir, 1e-6), np.nan)
     seuil = float(threshold_otsu(mndwi[valide]))
-    eau = mndwi > seuil
+    return extraire_ligne(mndwi, valide, seuil, transform), seuil, mndwi, transform, crs
 
-    # Ligne par ligne : première terre (TERRE_CONSECUTIVE pixels d'affilée) en venant de l'ouest
+
+def extraire_ligne(indice, valide, seuil, transform):
+    """Trait de côte à partir d'un indice où l'eau est au-dessus du seuil (MNDWI, ou radar inversé).
+
+    Ligne par ligne de l'image : première terre (TERRE_CONSECUTIVE pixels d'affilée) en venant de l'ouest.
+    Retourne une MultiLineString (coupée aux sauts), ou None.
+    """
+    eau = indice > seuil
     lignes_y, colonnes_x = [], []
     for r in range(eau.shape[0]):
         if not valide[r, :20].all() or not eau[r, :20].all():
@@ -90,13 +97,13 @@ def trait_de_cote(item):
             continue
         c = int(np.argmax(suite))
         # Position sous-pixel : interpolation du passage au seuil entre c-1 et c
-        a, b = mndwi[r, c - 1], mndwi[r, c]
+        a, b = indice[r, c - 1], indice[r, c]
         frac = (a - seuil) / (a - b) if a != b else 0.5
         lignes_y.append(r)
         colonnes_x.append(c - 1 + float(np.clip(frac, 0, 1)) + 0.5)
 
     if len(colonnes_x) < 10:
-        return None, seuil, mndwi, transform, crs
+        return None
     colonnes_x = median_filter(np.array(colonnes_x), size=LISSAGE_LIGNES)
     xs, ys = rasterio.transform.xy(transform, np.array(lignes_y) + 0.5, colonnes_x - 0.5, offset="ul")
     points = np.column_stack([xs, ys])
@@ -110,9 +117,7 @@ def trait_de_cote(item):
         courant.append(q)
     segments.append(courant)
     lignes = [LineString(s) for s in segments if len(s) >= 10]
-    if not lignes:
-        return None, seuil, mndwi, transform, crs
-    return MultiLineString(lignes), seuil, mndwi, transform, crs
+    return MultiLineString(lignes) if lignes else None
 
 
 def apercu(mndwi, transform, ligne, titre, chemin):

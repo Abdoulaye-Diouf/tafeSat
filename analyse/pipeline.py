@@ -19,12 +19,15 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from config import ANNEES_PROJECTION, CRS_METRIQUE, CRS_WEB, DONNEES, NIVEAUX_RISQUE, RESULTATS
-from exposition import bandes_menacees, compter_exposition, rattacher_quartiers
+from config import ANNEES_PROJECTION, CRS_METRIQUE, CRS_WEB, DONNEES, NIVEAUX_RISQUE, NON_EVALUE, RESULTATS
+from exposition import (bandes_menacees, compter_exposition, fusionner_batiments, habitants_par_batiment,
+                        marge_avant_batiments, rattacher_quartiers)
 from recul import positions_sur_transects, statistiques, traits_projetes
+from risque import altitude_cote, classer_risque_global
 from transects import construire_transects, ligne_de_base
 
-COULEURS_RISQUE = {"faible": "#2e7d32", "moyen": "#f9a825", "élevé": "#ef6c00", "très élevé": "#c62828"}
+COULEURS_RISQUE = {"faible": "#2e7d32", "moyen": "#f9a825", "élevé": "#ef6c00", "très élevé": "#c62828",
+                   NON_EVALUE: "#9e9e9e"}
 
 
 def lire_si_present(nom: str):
@@ -40,7 +43,7 @@ def carte_controle(traits, resultats, projetes, bandes, chemin) -> None:
     fig, ax = plt.subplots(figsize=(7, 11))
     for _, t in traits.sort_values("date").iterrows():
         gpd.GeoSeries([t.geometry], crs=traits.crs).plot(ax=ax, color="#90a4ae", linewidth=0.6)
-    for niveau in NIVEAUX_RISQUE:
+    for niveau in NIVEAUX_RISQUE + [NON_EVALUE]:
         sel = resultats[resultats.risque == niveau]
         if len(sel):
             sel.plot(ax=ax, color=COULEURS_RISQUE[niveau], linewidth=1.2, label=f"Risque {niveau}")
@@ -75,34 +78,52 @@ def main() -> None:
     resultats = statistiques(transects, positions)
     print(f"{len(resultats)} transects avec au moins 3 mesures")
 
-    batiments = lire_si_present("batiments_osm")
+    batiments = fusionner_batiments(lire_si_present("batiments_osm"), lire_si_present("batiments_google_microsoft"))
+    if batiments is not None:
+        print(f"{len(batiments)} bâtiments : {batiments.source.value_counts().to_dict()}")
+        batiments = habitants_par_batiment(batiments)
     equipements = lire_si_present("equipements_osm")
-    resultats = rattacher_quartiers(resultats, lire_si_present("quartiers_osm"))
+    resultats = rattacher_quartiers(resultats, lire_si_present("quartiers_osm"), base)
 
     annee = ANNEES_PROJECTION[0]
-    bandes = bandes_menacees(resultats, annee)
-    resultats, batiments_menaces = compter_exposition(resultats, bandes, batiments, equipements, annee)
+    bandes_par_annee, batiments_par_annee = {}, {}
+    for a in ANNEES_PROJECTION:
+        bandes_par_annee[a] = bandes_menacees(resultats, a)
+        resultats, batiments_par_annee[a] = compter_exposition(resultats, bandes_par_annee[a], batiments,
+                                                               equipements, a)
+        resultats = marge_avant_batiments(resultats, batiments, a)
+    bandes = bandes_par_annee[annee]
+    resultats = classer_risque_global(altitude_cote(resultats), annee)
     projetes = gpd.GeoDataFrame(
         gpd.pd.concat([traits_projetes(resultats, a) for a in ANNEES_PROJECTION], ignore_index=True),
         crs=CRS_METRIQUE)
 
     exporter(resultats.drop(columns=["nx", "ny", "origine_x", "origine_y"]), "transects_resultats")
     exporter(projetes, "traits_de_cote_projetes")
-    exporter(bandes, f"bande_menacee_{annee}")
-    exporter(batiments_menaces, f"batiments_menaces_{annee}")
+    for a in ANNEES_PROJECTION:
+        exporter(bandes_par_annee[a], f"bande_menacee_{a}")
+        exporter(batiments_par_annee[a], f"batiments_menaces_{a}")
     exporter(gpd.GeoDataFrame(geometry=[base], crs=CRS_METRIQUE), "ligne_de_base")
     resultats.drop(columns="geometry").to_csv(RESULTATS / "transects_resultats.csv", index=False, encoding="utf-8-sig")
 
     resume = (resultats.groupby("quartier", dropna=False)
               .agg(transects=("transect_id", "count"), recul_moyen_m_an=("recul_m_an", "mean"),
-                   recul_max_m_an=("recul_m_an", "max"), **{f"batiments_menaces_{annee}": (f"batiments_menaces_{annee}", "sum")},
-                   **{f"equipements_menaces_{annee}": (f"equipements_menaces_{annee}", "sum")})
+                   recul_max_m_an=("recul_m_an", "max"), altitude_mediane_m=("altitude_m", "median"),
+                   **{f"marge_min_{a}_m": (f"marge_batiments_{a}_m", "min") for a in ANNEES_PROJECTION},
+                   **{f"{quoi}_menaces_{a}": (f"{quoi}_menaces_{a}", "sum")
+                      for a in ANNEES_PROJECTION for quoi in ("batiments", "habitants", "equipements")})
               .round(2).sort_values("recul_moyen_m_an", ascending=False))
     resume.to_csv(RESULTATS / "resume_par_quartier.csv", encoding="utf-8-sig")
     carte_controle(traits, resultats, projetes, bandes, RESULTATS / "carte_controle.png")
 
-    print(f"\nRecul moyen : {resultats.recul_m_an.mean():.2f} m/an ; maximum : {resultats.recul_m_an.max():.2f} m/an")
-    print(f"Bâtiments dans la bande menacée d'ici {annee} : {int(resultats[f'batiments_menaces_{annee}'].sum())}")
+    print(f"\nTronçons projetés : {int(resultats.projection_fiable.sum())} ; avec une rupture (zone de la brèche) : "
+          f"{int(resultats.rupture.sum())}")
+    print(f"Recul moyen : {resultats.recul_m_an.mean():.2f} m/an ; maximum : {resultats.recul_m_an.max():.2f} m/an")
+    for a in ANNEES_PROJECTION:
+        print(f"D'ici {a} : {int(resultats[f'batiments_menaces_{a}'].sum())} bâtiments, "
+              f"{resultats[f'habitants_menaces_{a}'].sum():.0f} habitants, "
+              f"{int(resultats[f'equipements_menaces_{a}'].sum())} équipements dans la bande menacée")
+    print(f"Tronçons à crête de dune basse (< 3 m) : {int(resultats.cote_basse.sum())} sur {len(resultats)}")
     print("Répartition du risque :", resultats.risque.value_counts().to_dict())
     print(f"\nRésultats écrits dans {RESULTATS}")
 

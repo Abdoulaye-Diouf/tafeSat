@@ -5,3 +5,9 @@ resultats/
 donnees/*_TEST.geojson
 donnees/cache_osm/
 donnees/apercus/
+donnees/cache_worldpop/
+
+# Documents internes de l'équipe (pitch, questions du jury) : jamais sur GitHub
+prive/
+# Re-téléchargeable en 1 minute (analyse/telecharger_batiments_google.py), 34 Mo
+donnees/batiments_google_microsoft.geojson
