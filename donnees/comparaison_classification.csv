@@ -1,0 +1,9 @@
+date,methode,ecart_moyen_m,ecart_median_m,part_moins_10m_pct,longueur_km
+2017-02-07,Otsu (MNDWI),6.2,6.0,99,10.2
+2017-02-07,Random Forest,12.9,12.1,22,10.4
+2019-01-08,Otsu (MNDWI),6.2,6.0,99,10.1
+2019-01-08,Random Forest,71.5,85.3,3,29.3
+2022-01-02,Otsu (MNDWI),4.7,4.5,99,10.1
+2022-01-02,Random Forest,64.8,13.7,22,13.3
+2025-01-06,Otsu (MNDWI),8.2,7.8,97,10.1
+2025-01-06,Random Forest,72.9,82.7,1,30.6
