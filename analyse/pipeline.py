@@ -39,6 +39,18 @@ def exporter(gdf: gpd.GeoDataFrame, nom: str) -> None:
     gdf.to_crs(CRS_WEB).to_file(RESULTATS / f"{nom}.geojson", driver="GeoJSON")
 
 
+def exporter_positions(positions) -> None:
+    """Historique de la côte pour le tableau de bord : position (m, positive vers la mer, par rapport à la ligne
+    de base) de chaque tronçon à chaque date, et médiane par année (une colonne par année)."""
+    positions = positions.assign(date=gpd.pd.to_datetime(positions.date).dt.date.astype(str)).sort_values(
+        ["transect_id", "date"])
+    positions[["transect_id", "date", "distance_m"]].round(1).to_csv(
+        RESULTATS / "positions_par_date.csv", index=False, encoding="utf-8-sig")
+    annuel = (positions.assign(annee=positions.date.str[:4])
+              .pivot_table(index="transect_id", columns="annee", values="distance_m", aggfunc="median").round(1))
+    annuel.to_csv(RESULTATS / "positions_par_annee.csv", encoding="utf-8-sig")
+
+
 def carte_controle(traits, resultats, projetes, bandes, chemin) -> None:
     fig, ax = plt.subplots(figsize=(7, 11))
     for _, t in traits.sort_values("date").iterrows():
@@ -78,6 +90,7 @@ def main() -> None:
     print(f"{len(transects)} transects tous les 50 m sur {base.length / 1000:.1f} km de côte")
 
     positions = positions_sur_transects(transects, traits)
+    exporter_positions(positions)
     resultats = statistiques(transects, positions, zone_digue=transects_zone_digue(transects))
     print(f"{len(resultats)} transects avec au moins 3 mesures")
 

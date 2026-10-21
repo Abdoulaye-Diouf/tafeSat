@@ -85,6 +85,8 @@ Au moins 4 dates sur 3 ans sont nécessaires pour projeter un tronçon ; idéale
 | `bande_menacee_2030.geojson`, `bande_menacee_2035.geojson` | zone que la mer devrait atteindre |
 | `batiments_menaces_2030.geojson`, `batiments_menaces_2035.geojson` | bâtiments situés dans cette zone, avec leurs habitants estimés |
 | `ligne_de_base.geojson` | ligne de référence des transects |
+| `positions_par_annee.csv` | historique de la côte : une ligne par tronçon, une colonne par année (médiane des positions de l'année, m, positive vers la mer) |
+| `positions_par_date.csv` | historique complet : une ligne par tronçon et par date (`transect_id`, `date`, `distance_m`) |
 | `resume_par_quartier.csv` | par quartier : recul moyen et maximum, altitude, marge minimale, bâtiments, habitants et équipements menacés |
 | `effet_digue.csv`, `effet_digue.png` | déplacement de la côte derrière la digue et dans la zone témoin |
 | `verification_sentinel1.csv` | écart entre le trait de côte radar et le trait de côte optique |
