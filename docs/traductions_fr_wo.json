@@ -1,51 +1,216 @@
 {
-  "_lisez_moi": "Textes du tableau de bord en français et en wolof (bouton FR | WO). Le wolof est un PREMIER BROUILLON : Ndèye Fatou, Abdoulaye et Malick le corrigent, puis mettent \"verifie\": true. {valeur}, {annee}, {nombre} sont remplacés par le code. Les clés de « niveaux_risque » sont exactement les valeurs de la colonne « risque » des résultats.",
-
+  "_lisez_moi": "Textes du tableau de bord en français et en wolof (bouton FR | WO). Chaque texte a un vocal wolof enregistré par Ndèye Fatou SOW : public/audio/wo_<clé>.m4a (accents et espaces retirés pour les niveaux de risque, ex. « très élevé » -> wo_tres_eleve.m4a). Les vocaux ne disent pas les chiffres : {valeur}, {annee}, {nombre} sont affichés à l’écran par le code. Les clés de « niveaux_risque » sont exactement les valeurs de la colonne « risque » des résultats.",
   "interface": {
-    "titre":              {"fr": "TefesSat",                                        "wo": "TefesSat",                                           "verifie": true},
-    "sous_titre":         {"fr": "Le recul de la côte à Saint-Louis, vu par satellite", "wo": "Géej gi di jël suuf ci Ndar, ni satellite bi ko gise", "verifie": false},
-    "langue":             {"fr": "Langue",                                          "wo": "Làkk",                                               "verifie": false},
-    "bouton_fr":          {"fr": "FR",                                              "wo": "FR",                                                 "verifie": true},
-    "bouton_wo":          {"fr": "WO",                                              "wo": "WO",                                                 "verifie": true},
-    "consigne_clic":      {"fr": "Cliquez sur un tronçon de côte pour voir son détail", "wo": "Bësal ci benn pàcc ci tefes bi ngir gis lu ko jëm", "verifie": false},
-    "legende":            {"fr": "Légende",                                         "wo": "Firi",                                               "verifie": false},
-    "ecouter_message":    {"fr": "Écouter le message en wolof",                     "wo": "Déglul kàddu gi ci wolof",                           "verifie": false},
-    "donnees_preliminaires": {"fr": "Chiffres préliminaires, mis à jour avec les images de TRL", "wo": "Xibaar yu jëkk la, dinañu leen defaraat", "verifie": false},
-    "si_tendance_continue":  {"fr": "Si la tendance actuelle continue",             "wo": "Su yëf yi sopplikul",                                "verifie": false},
-    "appel_action":       {"fr": "Il reste une marge : c’est maintenant qu’il faut agir", "wo": "Am na fi des : léegi lañu wara jëf",           "verifie": false}
+    "titre": {
+      "fr": "TefesSat",
+      "wo": "TefesSat",
+      "verifie": true
+    },
+    "sous_titre": {
+      "fr": "Le recul de la côte à Saint-Louis, vu par satellite",
+      "wo": "Géej gi di jël suuf ci Ndar, ni satellite bi ko gise",
+      "verifie": false
+    },
+    "langue": {
+      "fr": "Langue",
+      "wo": "Làkk",
+      "verifie": false
+    },
+    "bouton_fr": {
+      "fr": "FR",
+      "wo": "FR",
+      "verifie": true
+    },
+    "bouton_wo": {
+      "fr": "WO",
+      "wo": "WO",
+      "verifie": true
+    },
+    "consigne_clic": {
+      "fr": "Cliquez sur un tronçon de côte pour voir son détail",
+      "wo": "Bësal ci benn pàcc ci tefes bi ngir gis lu ko jëm",
+      "verifie": false
+    },
+    "legende": {
+      "fr": "Légende",
+      "wo": "Leeral",
+      "verifie": false
+    },
+    "ecouter_message": {
+      "fr": "Écouter le message en wolof",
+      "wo": "Déglul kàddu gi ci wolof",
+      "verifie": false
+    },
+    "donnees_preliminaires": {
+      "fr": "Chiffres calculés à partir des images satellite Sentinel-2, de 2016 à 2025",
+      "wo": "Lim yii, ñu ngi leen jële ci nataali satellite Sentinel-2, li dale 2016 ba 2025",
+      "verifie": false
+    },
+    "si_tendance_continue": {
+      "fr": "Si la tendance actuelle continue",
+      "wo": "Su yëf yi soppikuwul",
+      "verifie": false
+    },
+    "appel_action": {
+      "fr": "Il reste une marge : c’est maintenant qu’il faut agir",
+      "wo": "Am na fi des : léegi lañu wara jëf",
+      "verifie": false
+    }
   },
-
   "niveaux_risque": {
-    "faible":      {"fr": "Risque faible",      "wo": "Njàqare tuuti",                "verifie": false},
-    "moyen":       {"fr": "Risque moyen",       "wo": "Njàqare bu yem",               "verifie": false},
-    "élevé":       {"fr": "Risque élevé",       "wo": "Njàqare bu mag",               "verifie": false},
-    "très élevé":  {"fr": "Risque très élevé",  "wo": "Njàqare bu mag lool",          "verifie": false},
-    "non évalué":  {"fr": "Non évalué (données insuffisantes)", "wo": "Xamuñu ko ba léegi", "verifie": false}
+    "faible": {
+      "fr": "Risque faible",
+      "wo": "Njàqare tuuti",
+      "verifie": false
+    },
+    "moyen": {
+      "fr": "Risque moyen",
+      "wo": "Njàqare bu yem",
+      "verifie": false
+    },
+    "élevé": {
+      "fr": "Risque élevé",
+      "wo": "Njàqare bu mag",
+      "verifie": false
+    },
+    "très élevé": {
+      "fr": "Risque très élevé",
+      "wo": "Njàqare bu mag lool",
+      "verifie": false
+    },
+    "non évalué": {
+      "fr": "Non évalué (données insuffisantes)",
+      "wo": "Xamuñu ko ba léegi",
+      "verifie": false
+    }
   },
-
   "fiche_troncon": {
-    "quartier":            {"fr": "Quartier",                                            "wo": "Gox",                                                    "verifie": false},
-    "cote_recule":         {"fr": "La côte recule de {valeur} m par an",                 "wo": "Géej gi dafay jël {valeur} meetar at mu nekk",            "verifie": false},
-    "cote_avance":         {"fr": "La côte avance de {valeur} m par an",                 "wo": "Suuf si dafay yokku {valeur} meetar at mu nekk",          "verifie": false},
-    "cote_stable":         {"fr": "La côte est stable",                                  "wo": "Tefes bi dafa dal",                                      "verifie": false},
-    "historique":          {"fr": "Position de la côte année par année",                 "wo": "Fi tefes bi nekkoon at mu nekk",                          "verifie": false},
-    "marge_maisons":       {"fr": "Distance entre la mer et les maisons en {annee} : {valeur} m", "wo": "Diggante géej gi ak kër yi ci {annee} : {valeur} meetar", "verifie": false},
-    "maisons_menacees":    {"fr": "{nombre} maisons atteintes par la mer d’ici {annee}", "wo": "{nombre} kër yu géej gi mën a jot ba {annee}",             "verifie": false},
-    "habitants_menaces":   {"fr": "Environ {nombre} habitants concernés",                "wo": "Lu tollu ci {nombre} nit ñoo ci nekk",                    "verifie": false},
-    "equipements_menaces": {"fr": "Écoles, mosquées et postes de santé menacés : {nombre}", "wo": "Lekool, jàkka ak bërëbu faju yu ci nekk : {nombre}",   "verifie": false},
-    "hauteur_dune":        {"fr": "Hauteur de la dune : {valeur} m",                     "wo": "Kawteefu tund wi : {valeur} meetar",                      "verifie": false},
-    "dune_basse":          {"fr": "Dune basse : la mer peut passer par-dessus lors des fortes houles", "wo": "Tund wi dafa gàtt : géej gi mën na ko jàll bu duus yi metti", "verifie": false},
-    "zone_digue":          {"fr": "Zone protégée par la digue",                          "wo": "Fii, digue bi moo koy aar",                               "verifie": false},
-    "zone_breche":         {"fr": "Zone de la brèche : la côte bouge par sauts",         "wo": "Fii la géej gi tojoon suuf si : tefes bi dafay tëb",      "verifie": false},
-    "incertitude":         {"fr": "Marge d’erreur : ± {valeur} m",                       "wo": "Lu mën a sore : ± {valeur} meetar",                       "verifie": false}
+    "quartier": {
+      "fr": "Quartier",
+      "wo": "Gox",
+      "verifie": false
+    },
+    "cote_recule": {
+      "fr": "La côte recule de {valeur} m par an",
+      "wo": "Géej gi dafay jël {valeur} meetar at mu nekk",
+      "verifie": false
+    },
+    "cote_avance": {
+      "fr": "La côte avance de {valeur} m par an",
+      "wo": "Suuf si dafay yokku {valeur} meetar at mu nekk",
+      "verifie": false
+    },
+    "cote_stable": {
+      "fr": "La côte est stable",
+      "wo": "Tefes bi dafa dal",
+      "verifie": false
+    },
+    "historique": {
+      "fr": "Position de la côte année par année",
+      "wo": "Fi tefes bi nekkoon at mu nekk",
+      "verifie": false
+    },
+    "marge_maisons": {
+      "fr": "Distance entre la mer et les maisons en {annee} : {valeur} m",
+      "wo": "Diggante géej gi ak kër yi ci {annee} : {valeur} meetar",
+      "verifie": false
+    },
+    "maisons_menacees": {
+      "fr": "{nombre} maisons atteintes par la mer d’ici {annee}",
+      "wo": "{nombre} kër yu géej gi mën a jot ba {annee}",
+      "verifie": false
+    },
+    "habitants_menaces": {
+      "fr": "Environ {nombre} habitants concernés",
+      "wo": "Lu tollu ci {nombre} nit ñoo ci nekk",
+      "verifie": false
+    },
+    "equipements_menaces": {
+      "fr": "Écoles, mosquées et postes de santé menacés : {nombre}",
+      "wo": "Lekool, jàkka ak bërëbu faju yu ci nekk : {nombre}",
+      "verifie": false
+    },
+    "hauteur_dune": {
+      "fr": "Hauteur de la dune : {valeur} m",
+      "wo": "Kawteefu tund wi : {valeur} meetar",
+      "verifie": false
+    },
+    "dune_basse": {
+      "fr": "Dune basse : la mer peut passer par-dessus lors des fortes houles",
+      "wo": "Tund wi dafa gàtt : géej gi mën na ko jàll bu duus yi metti",
+      "verifie": false
+    },
+    "zone_digue": {
+      "fr": "Zone protégée par la digue",
+      "wo": "Fii, digue bi moo koy aar",
+      "verifie": false
+    },
+    "zone_breche": {
+      "fr": "Zone de la brèche : la côte bouge par sauts",
+      "wo": "Fii la géej gi tojoon suuf si : tefes bi dafay tëb",
+      "verifie": false
+    },
+    "incertitude": {
+      "fr": "Marge d’erreur : ± {valeur} m",
+      "wo": "Njuumte gu mën a am : ± {valeur} meetar",
+      "verifie": false
+    },
+    "non_projete_digue": {
+      "fr": "Pas de projection : trop peu d’images depuis la construction de la digue",
+      "wo": "Amul xayma : nataal yi ñu am ginnaaw tabax digue bi barewul",
+      "verifie": false
+    },
+    "non_projete_serie": {
+      "fr": "Pas de projection : pas assez d’images sur ce tronçon",
+      "wo": "Amul xayma : nataal yi ñu am ci pàcc bii barewul",
+      "verifie": false
+    },
+    "marge_actuelle": {
+      "fr": "Aujourd’hui : {valeur} m entre la mer et les maisons",
+      "wo": "Tey : {valeur} meetar ci diggante géej gi ak kër yi",
+      "verifie": false
+    },
+    "pire_cas": {
+      "fr": "Dans le pire des cas : {valeur} m entre la mer et les maisons en {annee}",
+      "wo": "Ci lu gën a metti : {valeur} meetar ci diggante géej gi ak kër yi ci {annee}",
+      "verifie": false
+    },
+    "pire_cas_atteint": {
+      "fr": "Dans le pire des cas, des maisons pourraient être atteintes d’ici {annee}",
+      "wo": "Ci lu gën a metti, géej gi mën na jot ay kër ba {annee}",
+      "verifie": false
+    }
   },
-
   "legende_carte": {
-    "mer":            {"fr": "Mer",                         "wo": "Géej",                          "verifie": false},
-    "cote_actuelle":  {"fr": "Côte aujourd’hui",            "wo": "Tefes bi tey",                  "verifie": false},
-    "cote_2030":      {"fr": "Côte probable en 2030",       "wo": "Fi tefes bi mën a nekk ci 2030", "verifie": false},
-    "cote_2035":      {"fr": "Côte probable en 2035",       "wo": "Fi tefes bi mën a nekk ci 2035", "verifie": false},
-    "bande_menacee":  {"fr": "Zone que la mer peut atteindre", "wo": "Fi géej gi mën a jot",         "verifie": false},
-    "maison":         {"fr": "Maison",                      "wo": "Kër",                           "verifie": false}
+    "mer": {
+      "fr": "Mer",
+      "wo": "Géej",
+      "verifie": false
+    },
+    "cote_actuelle": {
+      "fr": "Côte aujourd’hui",
+      "wo": "Tefes bi tey",
+      "verifie": false
+    },
+    "cote_2030": {
+      "fr": "Côte probable en 2030",
+      "wo": "Fi tefes bi mën a nekk ci 2030",
+      "verifie": false
+    },
+    "cote_2035": {
+      "fr": "Côte probable en 2035",
+      "wo": "Fi tefes bi mën a nekk ci 2035",
+      "verifie": false
+    },
+    "bande_menacee": {
+      "fr": "Zone que la mer peut atteindre",
+      "wo": "Fi géej gi mën a jot",
+      "verifie": false
+    },
+    "maison": {
+      "fr": "Maison",
+      "wo": "Kër",
+      "verifie": false
+    }
   }
 }
