@@ -1,12 +1,14 @@
-"""Combine les traits de côte CoastSat d'Abdoulaye (nord, environ 37 dates par an) et les nôtres (toute la côte, une
-date par an) en un seul fichier pour l'analyse.
+"""Combine les traits de côte CoastSat d'Abdoulaye et les nôtres (toute la côte, une date par an) en un seul fichier.
 
-Dans la bande de latitude couverte par CoastSat (Hydrobase – Goxu Mbacc), on garde ses traits de côte, beaucoup plus
-nombreux : ils permettent de projeter la zone de la digue, où nous n'avons que 3 images depuis les travaux. Ailleurs
-(brèche, Guéthie, nord de Goxu Mbacc), on garde nos traits de côte Sentinel-2.
+- Au nord (Hydrobase – Goxu Mbacc, environ 37 dates par an), les traits CoastSat REMPLACENT les nôtres : ils
+  permettent de projeter la zone de la digue, où nous n'avons que 3 images depuis les travaux.
+- Au sud (brèche, Guéthie, Tassinère), les traits CoastSat ne croisent qu'une partie des tronçons : ils s'AJOUTENT
+  aux nôtres, sans rien retirer. Les deux sources concordent à quelques mètres près aux dates communes
+  (voir comparaison_coastsat.py), ce qui justifie de les mélanger.
+- Ailleurs, nos traits de côte Sentinel-2.
 
 Usage : python fusion_traits.py
-Sortie : donnees/traits_de_cote_combines.geojson (colonne « source » : CoastSat ou Sentinel-2 TefesSat)
+Sortie : donnees/traits_de_cote_combines.geojson (colonne « source »)
 """
 
 import geopandas as gpd
@@ -21,34 +23,30 @@ TRAITS_COASTSAT_SUD = DONNEES / "traits_de_cote_coastsat_sud.geojson"  # CoastSa
 SORTIE = DONNEES / "traits_de_cote_combines.geojson"
 
 
-def lire_coastsat():
-    """Nord et sud CoastSat ; là où les deux se recouvrent, on garde le nord (série la plus longue)."""
-    nord_cs = gpd.read_file(TRAITS_COASTSAT).to_crs("EPSG:4326")
-    if not TRAITS_COASTSAT_SUD.exists():
-        return nord_cs
-    sud_cs = gpd.read_file(TRAITS_COASTSAT_SUD).to_crs("EPSG:4326")
-    limite = nord_cs.total_bounds[1]
-    sud_cs["geometry"] = sud_cs.geometry.intersection(box(-180, -90, 180, limite))
-    sud_cs = sud_cs[~sud_cs.geometry.is_empty]
-    return gpd.GeoDataFrame(pd.concat([nord_cs, sud_cs], ignore_index=True), crs="EPSG:4326")
+def lire(chemin, source):
+    gdf = gpd.read_file(chemin).to_crs("EPSG:4326")
+    return gdf.assign(date=pd.to_datetime(gdf.date).dt.date.astype(str), source=source)
 
 
 def main():
-    nous = gpd.read_file(TRAITS_NOUS).to_crs("EPSG:4326")
-    coastsat = lire_coastsat()
-    ouest, sud, est, nord = coastsat.total_bounds
-    bande = box(-180, sud, 180, nord)  # bande de latitude couverte par CoastSat
+    nous = lire(TRAITS_NOUS, "Sentinel-2 TefesSat")
+    nord_cs = lire(TRAITS_COASTSAT, "CoastSat nord (Abdoulaye DIOUF)")
+    _, sud, _, nord = nord_cs.total_bounds
+    bande_nord = box(-180, sud, 180, nord)  # bande de latitude couverte par le nord CoastSat
 
-    nous["geometry"] = nous.geometry.difference(bande)
+    nous["geometry"] = nous.geometry.difference(bande_nord)
     nous = nous[~nous.geometry.is_empty]
-    nous = nous.assign(date=pd.to_datetime(nous.date).dt.date.astype(str), source="Sentinel-2 TefesSat")
-    coastsat = coastsat.assign(date=pd.to_datetime(coastsat.date).dt.date.astype(str), source="CoastSat (Abdoulaye DIOUF)")
+    morceaux = [nous, nord_cs]
+    if TRAITS_COASTSAT_SUD.exists():
+        sud_cs = lire(TRAITS_COASTSAT_SUD, "CoastSat sud (Abdoulaye DIOUF)")
+        sud_cs["geometry"] = sud_cs.geometry.intersection(box(-180, -90, 180, sud))  # sous la bande du nord
+        sud_cs = sud_cs[~sud_cs.geometry.is_empty]
+        morceaux.append(sud_cs)
 
-    combines = gpd.GeoDataFrame(pd.concat([nous[["date", "source", "geometry"]], coastsat[["date", "source", "geometry"]]],
-                                          ignore_index=True), crs="EPSG:4326")
+    combines = gpd.GeoDataFrame(pd.concat([m[["date", "source", "geometry"]] for m in morceaux], ignore_index=True),
+                                crs="EPSG:4326")
     combines.to_file(SORTIE, driver="GeoJSON")
-    print(f"CoastSat : {len(coastsat)} traits de côte, latitudes {sud:.3f} à {nord:.3f}")
-    print(f"Sentinel-2 TefesSat : {len(nous)} traits de côte hors de cette bande")
+    print(f"Traits de côte par source : {combines.source.value_counts().to_dict()}")
     print(f"-> {SORTIE.name} : {len(combines)} traits de côte")
 
 

@@ -22,7 +22,10 @@ def lire(chemin):
 
 def main():
     nous = lire(DONNEES / "traits_de_cote_S2.geojson")
-    coastsat = lire(DONNEES / "traits_de_cote_coastsat.geojson")
+    coastsat = lire(DONNEES / "traits_de_cote_coastsat.geojson")  # nord
+    sud = DONNEES / "traits_de_cote_coastsat_sud.geojson"
+    if sud.exists():
+        coastsat = gpd.GeoDataFrame(gpd.pd.concat([coastsat, lire(sud)], ignore_index=True), crs=coastsat.crs)
     transects = construire_transects(ligne_de_base(nous))
     communes = sorted(set(nous.date) & set(coastsat.date))
     p_nous = positions_sur_transects(transects, nous[nous.date.isin(communes)])
